@@ -1,0 +1,36 @@
+[
+    {
+    "purchaseId": "p1",
+    "title": "Netflix Subscription",
+    "type": "fixed",
+    "amount": 29.90,
+    "buyerId": null,
+    "buyerName": "Alice",
+    "creditCardId": "123",
+    "startDate": "2024-01-15T00:00:00Z",
+    "isActive": true
+  },
+  {
+    "purchaseId": "p2", 
+    "title": "Laptop Purchase",
+    "type": "parcel",
+    "amount": 1500.00,
+    "buyerId": null,
+    "buyerName": "Bob",
+    "creditCardId": "123",
+    "startDate": "2024-02-10T00:00:00Z" ,
+    "isActive": false
+  },
+  {
+    "purchaseId": "p3",
+    "title": "Grocery Shopping",
+    "type": "fixed",
+    "amount": 200.00,
+    "buyerId": null,
+    "buyerName": "Alice",
+    "creditCardId": "123",
+    "startDate": "2024-03-05T00:00:00Z",
+    "isActive": true
+  }
+
+]

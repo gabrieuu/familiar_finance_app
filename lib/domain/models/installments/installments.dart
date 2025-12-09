@@ -1,7 +1,8 @@
 class Installments {
   final String installmentId;   
   final String purchaseId;      
-  final String month;           
+  final String month;          
+  final int installmentNumber; 
   final double amount;          
   final String status;          
 
@@ -9,14 +10,16 @@ class Installments {
     required this.installmentId,
     required this.purchaseId,
     required this.month,
+    required this.installmentNumber,
     required this.amount,
     required this.status,
   });
 
-  factory Installments.fromJson(Map<String, dynamic> json) {
+  factory Installments.fromMap(Map<String, dynamic> json) {
     return Installments(
       installmentId: json['installmentId'],
       purchaseId: json['purchaseId'],
+      installmentNumber: json['installmentNumber'],
       month: json['month'],
       amount: json['amount'].toDouble(),
       status: json['status'],
@@ -27,6 +30,7 @@ class Installments {
     return {
       'installmentId': installmentId,
       'purchaseId': purchaseId,
+      'installmentNumber': installmentNumber,
       'month': month,
       'amount': amount,
       'status': status,

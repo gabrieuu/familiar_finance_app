@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "413488815046",
+    "project_id": "familiar-finance-project",
+    "storage_bucket": "familiar-finance-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413488815046:android:43c03e50ea086928f7f0c7",
+        "android_client_info": {
+          "package_name": "com.example.familiar_finance_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC96AVOXVOyVBDQ-FEBuDDIkXpMGLiWKBs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

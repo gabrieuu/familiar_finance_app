@@ -1,0 +1,16 @@
+[
+  {
+    "id": "cc1",
+    "userId": "u1",
+    "nomeCartao": "Visa Gold",
+    "diaVencimento": "08",
+    "limite": 5000.00
+  },
+  {
+    "id": "cc2",
+    "userId": "u1",
+    "nomeCartao": "Mastercard Platinum",
+    "diaVencimento": "10",
+    "limite": null
+  }
+]
