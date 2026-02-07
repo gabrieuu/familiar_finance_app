@@ -1,5 +1,6 @@
 import 'dart:developer';
-import 'package:familiar_finance_app/ui/purchase/bloc/purchase_bloc.dart';
+import 'package:familiar_finance_app/domain/purchase/purchase.dart';
+import 'package:familiar_finance_app/ui/purchase/bloc/create_purchase_bloc.dart';
 import 'package:familiar_finance_app/ui/purchase/bloc/purchase_state.dart';
 import 'package:familiar_finance_app/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
@@ -11,20 +12,30 @@ const Color _kBackground = Color(0xFFF6F9FC);
 const Color _kSurface = Colors.white;
 
 class CreatePurchase extends StatefulWidget {
-  const CreatePurchase({super.key});
-  
+  const CreatePurchase({super.key, this.purchase});
+  final Purchase? purchase;
+
   @override
   State<CreatePurchase> createState() => _CreatePurchaseState();
 }
 
 class _CreatePurchaseState extends State<CreatePurchase> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _buyerNameController = TextEditingController();
-  final TextEditingController _amountController = TextEditingController();
+  late final TextEditingController _titleController;
+  late final TextEditingController _buyerNameController;
+  late final TextEditingController _amountController;
+  
   @override
   void initState() {
     super.initState();
+    if(widget.purchase != null){
+      final bloc = context.read<CreatePurchaseBloc>();
+      bloc.loadForEdit(widget.purchase!);
+    }
+    _titleController = TextEditingController(text: widget.purchase?.title ?? '');
+    _buyerNameController = TextEditingController(text: '');
+    _amountController = TextEditingController(text: widget.purchase?.amount.toString() ?? '');
+  
   }
 
   @override
@@ -47,7 +58,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.watch<PurchaseBloc>();
+    final bloc = context.watch<CreatePurchaseBloc>();
     return Scaffold(
       backgroundColor: _kBackground,
       appBar: AppBar(
@@ -72,7 +83,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Card selector
-                      BlocBuilder<PurchaseBloc, PurchaseCreateState>(
+                      BlocBuilder<CreatePurchaseBloc, PurchaseCreateState>(
                         bloc: bloc,
                         buildWhen: (previous, current) {
                           return previous.creditCards != current.creditCards;
@@ -82,10 +93,16 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                             return const Text('No credit cards available. Please add a credit card first.', style: TextStyle(color: Colors.redAccent),);
                           }
                           return DropdownButtonFormField<String>(
-                            initialValue: state.cardSelectedId ?? state.creditCards.first.cardId,
+                            initialValue: state.cardSelectedId,
                             menuMaxHeight: 100,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Select a credit card';
+                              }
+                              return null;
+                            },
                             decoration: _inputDecoration(label: 'Card', icon: Icons.credit_card),
-                            items: (state.creditCards.isNotEmpty) ? state.creditCards.map((c) => DropdownMenuItem(value: c.cardId, child: Text(c.nomeCartao))).toList() : [],
+                            items: (state.creditCards.isNotEmpty) ? state.creditCards.map((c) => DropdownMenuItem(value: c.id, child: Text(c.nomeCartao))).toList() : [],
                             onChanged: (val){
                               if(val == null) return;
                               log(val);
@@ -121,10 +138,16 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                           CurrencyInputFormatter(),
                         ],
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return 'Enter an amount';
-                          final a = double.tryParse(v.replaceAll(',', '.'));
-                          if (a == null || a <= 0) return 'Enter a valid amount';
-                          return null;
+                         if (v == null || v.trim().isEmpty) return 'Enter an amount';
+
+                        final normalized = v
+                            .replaceAll('.', '')   // remove milhar
+                            .replaceAll(',', '.'); // corrige decimal
+
+                        final a = double.tryParse(normalized);
+
+                        if (a == null || a <= 0) return 'Enter a valid amount';
+                        return null;
                         },
                         onChanged: (value){
                           final amount = double.tryParse(value.replaceAll('.', '').replaceAll(',', '.'));
@@ -134,7 +157,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                       // Fixed / Installment toggles
                       Column(
                         children: [
-                          BlocBuilder<PurchaseBloc, PurchaseCreateState>(
+                          BlocBuilder<CreatePurchaseBloc, PurchaseCreateState>(
                             bloc: bloc,
                             builder: (context, state) {
                               return SwitchListTile(
@@ -152,7 +175,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                               );
                             }
                           ),
-                          BlocBuilder<PurchaseBloc, PurchaseCreateState>(
+                          BlocBuilder<CreatePurchaseBloc, PurchaseCreateState>(
                             bloc: bloc,
                             builder: (context, state) {
                               if(state.isFixed){
@@ -176,7 +199,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                         ],                      ),
                       const SizedBox(height: 12.0),
                       // Installments and Date row
-                      BlocBuilder<PurchaseBloc, PurchaseCreateState>(
+                      BlocBuilder<CreatePurchaseBloc, PurchaseCreateState>(
                         bloc: bloc,
                         buildWhen: (previous, current) {
                           return previous.isInstallment != current.isInstallment;
@@ -188,35 +211,48 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                           return Row(
                             children: [
                               Expanded(
-                                child: BlocBuilder<PurchaseBloc, PurchaseCreateState>(
+                                child: BlocBuilder<CreatePurchaseBloc, PurchaseCreateState>(
                                   bloc: bloc,
                                   builder: (context, state) {
                                     return DropdownButtonFormField<int>(
-                                      initialValue: state.installments ?? 1,
+                                      initialValue: state.installments,
                                       decoration: _inputDecoration(label: 'Installments', icon: Icons.filter_1),
                                       items: List.generate(100, (i) => i + 1).map((i) => DropdownMenuItem(value: i, child: Text('${i}x'))).toList(),
-                                      onChanged: (v) => bloc.setInstallments,
+                                      onChanged: bloc.setInstallments,
                                     );
                                   }
                                 ),
                               ),
                               const SizedBox(width: 12.0),
                               Expanded(
-                                child: InkWell(
-                                  onTap: (){},
-                                  child: InputDecorator(
-                                    decoration: _inputDecoration(label: 'Date', icon: Icons.date_range),
-                                    child: BlocBuilder<PurchaseBloc, PurchaseCreateState>(
-                                      bloc: bloc,
-                                      builder: (context, state) {
-                                         DateTime selectedDate = state.purchaseDate ?? DateTime.now();
-                                        return Text(
-                                          selectedDate.toLocal().toIso8601String().split('T').first,
-                                          style: const TextStyle(fontSize: 16.0),
-                                        );
-                                      }
-                                    ),
-                                  ),
+                                child: BlocBuilder<CreatePurchaseBloc, PurchaseCreateState>(
+                                          bloc: bloc,
+                                          builder: (context, state) {
+                                    DateTime selectedDate = state.purchaseDate ?? DateTime.now();
+                                    return InkWell(
+                                      onTap: (){
+                                        showDatePicker(
+                                          context: context, 
+                                          initialDate: bloc.state.purchaseDate ?? DateTime.now(), 
+                                          firstDate: DateTime(2000), 
+                                          lastDate: DateTime(2100)
+                                        ).then((selected){
+                                          if(selected != null){
+                                            bloc.setPurchaseDate(selected);
+                                          }
+                                        });
+                                      },
+                                      child: InputDecorator(
+                                        decoration: _inputDecoration(label: 'Date', icon: Icons.date_range),
+                                        child: Text(
+                                              selectedDate.toLocal().toIso8601String().split('T').first,
+                                              style: const TextStyle(fontSize: 16.0),
+                                            
+
+                                        ),
+                                      ),
+                                    );
+                                  }
                                 ),
                               ),
                             ],
@@ -244,6 +280,14 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                                   return;
                                 }
                                 bloc.addPurchase();
+                                if(bloc.state.errorMessage != null){
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(bloc.state.errorMessage!)));
+                                  return;
+                                } 
+                                if(mounted){
+                                  Navigator.of(context).pop();
+                                }
+                                
                               },
                               style: ElevatedButton.styleFrom(backgroundColor: _kPrimary, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14.0)),
                               child: const Text('Save Purchase', style: TextStyle(fontWeight: FontWeight.w600)),

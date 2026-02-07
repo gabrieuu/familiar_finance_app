@@ -1,5 +1,5 @@
 import 'package:familiar_finance_app/data/services/purchase/model/purchase_dto.dart';
-import 'package:familiar_finance_app/domain/models/purchase/purchase.dart';
+import 'package:familiar_finance_app/domain/purchase/purchase.dart';
 import 'package:familiar_finance_app/utils/result.dart';
 
 abstract class PurchaseService {

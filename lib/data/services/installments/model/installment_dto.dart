@@ -2,6 +2,7 @@ class InstallmentDTO {
   final String installmentId;
   final String purchaseId;
   final int installmentNumber;
+  final DateTime dueDate;
   final String month;
   final double amount;
   final bool isPaid;
@@ -9,6 +10,7 @@ class InstallmentDTO {
   InstallmentDTO({
     required this.installmentId,
     required this.purchaseId,
+    required this.dueDate,
     required this.installmentNumber,
     required this.month,
     required this.amount,
@@ -19,6 +21,7 @@ class InstallmentDTO {
     return InstallmentDTO(
       installmentId: map['installmentId'],
       purchaseId: map['purchaseId'],
+      dueDate: DateTime.parse(map['dueDate']),
       installmentNumber: map['installmentNumber'],
       month: map['month'],
       amount: map['amount'],
@@ -30,6 +33,7 @@ class InstallmentDTO {
     return {
       'installmentId': installmentId,
       'purchaseId': purchaseId,
+      'dueDate': dueDate.toIso8601String(),
       'installmentNumber': installmentNumber,
       'month': month,
       'amount': amount,

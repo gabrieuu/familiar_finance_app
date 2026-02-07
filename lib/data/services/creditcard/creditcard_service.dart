@@ -3,6 +3,6 @@ import 'package:familiar_finance_app/utils/result.dart';
 
 abstract class CreditcardService {
   Future<Result<void>> createCreditcard(CreditCardDTO creditCard);
-  Future<Result<List<CreditCardDTO>>> getCreditcardsByUserId(String userId);
+  Future<Result<List<CreditCardDTO>>> getCreditcardsByUserId(int userId);
   Future<Result<void>> deleteCreditcard(String creditCardId);
 }

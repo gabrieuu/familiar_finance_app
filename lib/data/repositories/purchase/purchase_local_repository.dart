@@ -1,64 +1,59 @@
+import 'dart:async';
+
 import 'package:familiar_finance_app/data/repositories/purchase/purchase_repository.dart';
-import 'package:familiar_finance_app/data/services/installments/installments_local_service.dart';
-import 'package:familiar_finance_app/data/services/installments/installments_service.dart';
-import 'package:familiar_finance_app/data/services/purchase/purchase_local_service.dart';
-import 'package:familiar_finance_app/data/services/purchase/purchase_service.dart';
-import 'package:familiar_finance_app/domain/models/installments/installments.dart';
-import 'package:familiar_finance_app/domain/models/purchase/purchase.dart';
+import 'package:familiar_finance_app/domain/purchase/purchase.dart';
 import 'package:familiar_finance_app/utils/result.dart';
 
-class PurchaseLocalRepository extends PurchaseRepository {
-
-  final PurchaseService _purchaseService = PurchaseLocalService();
-  final InstallmentsService _installmentsService = InstallmentsLocalService();
+class PurchaseLocalRepository implements PurchaseRepository{
   
-  @override
-  Future<Result<void>> deletePurchase(String purchaseId) {
-    return _purchaseService.deletePurchase(purchaseId);
+  final List<Purchase> _purchases = [];
+
+  final _controller = StreamController<List<Purchase>>.broadcast();
+
+  PurchaseLocalRepository(){
+   _emit();
   }
 
-  @override
-  Future<Result<void>> editPurchase(String purchaseId, Purchase purchase) {
-    throw UnimplementedError();
+  void _emit() {
+    _controller.add(List.unmodifiable(_purchases));
   }
 
   @override
   Future<Result<List<Purchase>>> getAllPurchaseByCreditCard(String creditCardId) async{
-    final result = await _purchaseService.getPurchasesByCreditCardId(creditCardId);
-    return result.when(ok: (data) async{
-      List<Purchase> purchases = [];
-      for(var purchase in data){
-        final installmentsResult = await _installmentsService.getInstallmentsByPurchaseId(purchase.purchaseId);
-        installmentsResult.when(ok: (data){
-          purchases.add(Purchase(
-          title: purchase.title,
-          type: purchase.type,
-          purchaseId: purchase.purchaseId,
-          installments: data.map((dto) => Installments(
-            installmentId: dto.installmentId,
-            purchaseId: dto.purchaseId,
-            amount: dto.amount,
-            installmentNumber: dto.installmentNumber,
-            month: dto.month,
-            status: dto.isPaid ? 'paid' : 'unpaid',
-          )).toList(),
-          amount: purchase.amount,
-          buyerId: purchase.buyerId,
-          buyerName: purchase.buyerName,
-          creditCardId: purchase.creditCardId,
-          startDate: purchase.startDate,
-        ));
-        }, error: (_){});
-      }
-      return Result.ok(purchases);
-    }, error: (error){
-      return Result.error(error);
-    });
+    return Result.ok(List.unmodifiable(_purchases.where((p) => p.creditCardId == creditCardId).toList()));
   }
 
   @override
-  Future<Result<void>> registerPurchase(Purchase purchase) {
-    return _purchaseService.createPurchase(purchase);
+  Future<Result<void>> deletePurchase(String purchaseId) async{
+    _purchases.removeWhere((p) => p.id == purchaseId);
+    _emit();
+    return Result.ok(null);
   }
 
+  @override
+  Future<Result<void>> editPurchase(String purchaseId, Purchase purchase) async {
+   final index = _purchases.indexWhere((p) => p.id == purchaseId);
+    if (index != -1) {
+      _purchases[index] = purchase;
+      _emit();
+    }
+    return Result.ok(null);
+  }
+
+  @override
+  Future<Result<void>> registerPurchase(Purchase purchase) async {
+   _purchases.add(purchase);
+    _emit();
+    return Result.ok(null);
+  }
+
+  @override
+  Future<Result<List<Purchase>>> getPurchasesByMonth(int month, int year) async {
+    return Result.ok(List.unmodifiable(_purchases.where((p) =>  p.finalizedAt == null ||  ((p.createdAt.month <= month && p.createdAt.year <= year) && (p.finalizedAt!.month >= month && p.finalizedAt!.year >= year))).toList()));
+  }
+  
+  @override
+  Stream<List<Purchase>> watch() {
+    return _controller.stream;
+  }
 }

@@ -1,6 +1,6 @@
 class CreditCardDTO {
   String? id;
-  String userId;
+  int userId;
   String nomeCartao;
   String diaVencimento;
   double? limiteCredito;
