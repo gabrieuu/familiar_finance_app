@@ -13,7 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     const Color _kPrimary = Color(0xFF0A84FF);
@@ -23,77 +23,83 @@ class AppWidget extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => CreatePurchaseBloc(
-          context.read<CreditCardRepository>(),
-          context.read<CreatePurchaseUsecase>(),
-        )),
-        BlocProvider(create: (context) => HomeBloc(
-          context.read<AuthRepository>(),
-          context.read<PurchaseRepository>(),
-          context.read<InstallmentsRepository>(),
-          context.read<CreditCardRepository>(),
-        )),
-        BlocProvider(create: (context) => PurchaseListCubit(
-          context.read<PurchaseRepository>()
-        )),
-        BlocProvider(create: (context) => ListCreditCardCubit(
-          context.read<CreditCardRepository>()
-        )),
+        BlocProvider(
+          create: (context) => CreatePurchaseBloc(
+            context.read<CreditCardRepository>(),
+            context.read<CreatePurchaseUsecase>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => HomeBloc(
+            context.read<AuthRepository>(),
+            context.read<PurchaseRepository>(),
+            context.read<InstallmentsRepository>(),
+            context.read<CreditCardRepository>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) =>
+              PurchaseListCubit(context.read<PurchaseRepository>()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              ListCreditCardCubit(context.read<CreditCardRepository>()),
+        ),
       ],
       // a cor predominante do app será a azul
       child: MaterialApp(
-          home: HomePage(),
-          theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: _kPrimary,
-              primary: _kPrimary,
-              secondary: _kAccent,
-              background: _kBackground,
-              surface: _kSurface,
-            ),
-            primaryColor: _kPrimary,
-            scaffoldBackgroundColor: _kBackground,
-            appBarTheme: const AppBarTheme(
+        home: HomePage(),
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: _kPrimary,
+            primary: _kPrimary,
+            secondary: _kAccent,
+            background: _kBackground,
+            surface: _kSurface,
+          ),
+          primaryColor: _kPrimary,
+          scaffoldBackgroundColor: _kBackground,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: _kPrimary,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            centerTitle: false,
+          ),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: _kAccent,
+            foregroundColor: Colors.white,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
               backgroundColor: _kPrimary,
               foregroundColor: Colors.white,
-              elevation: 0,
-              centerTitle: false,
-            ),
-            floatingActionButtonTheme: FloatingActionButtonThemeData(
-              backgroundColor: _kAccent,
-              foregroundColor: Colors.white,
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _kPrimary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              filled: true,
-              fillColor: _kSurface,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            cardTheme: CardThemeData(
-              color: _kSurface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              elevation: 2,
             ),
-            textTheme: ThemeData.light().textTheme.apply(
-                  bodyColor: Colors.black87,
-                  displayColor: Colors.black87,
-                ),
           ),
-      )
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: _kSurface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          cardTheme: CardThemeData(
+            color: _kSurface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 2,
+          ),
+          textTheme: ThemeData.light().textTheme.apply(
+            bodyColor: Colors.black87,
+            displayColor: Colors.black87,
+          ),
+        ),
+      ),
     );
   }
 }

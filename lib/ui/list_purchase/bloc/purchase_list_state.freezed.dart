@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PurchaseListState {
 
- List<Purchase> get purchases; String? get errorMessage; DateTime get selectedDate;
+ List<Purchase> get purchases; bool get isLoading; String? get errorMessage; DateTime get selectedDate;
 /// Create a copy of PurchaseListState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $PurchaseListStateCopyWith<PurchaseListState> get copyWith => _$PurchaseListStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PurchaseListState&&const DeepCollectionEquality().equals(other.purchases, purchases)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PurchaseListState&&const DeepCollectionEquality().equals(other.purchases, purchases)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(purchases),errorMessage,selectedDate);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(purchases),isLoading,errorMessage,selectedDate);
 
 @override
 String toString() {
-  return 'PurchaseListState(purchases: $purchases, errorMessage: $errorMessage, selectedDate: $selectedDate)';
+  return 'PurchaseListState(purchases: $purchases, isLoading: $isLoading, errorMessage: $errorMessage, selectedDate: $selectedDate)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $PurchaseListStateCopyWith<$Res>  {
   factory $PurchaseListStateCopyWith(PurchaseListState value, $Res Function(PurchaseListState) _then) = _$PurchaseListStateCopyWithImpl;
 @useResult
 $Res call({
- List<Purchase> purchases, String? errorMessage, DateTime selectedDate
+ List<Purchase> purchases, bool isLoading, String? errorMessage, DateTime selectedDate
 });
 
 
@@ -62,10 +62,11 @@ class _$PurchaseListStateCopyWithImpl<$Res>
 
 /// Create a copy of PurchaseListState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? purchases = null,Object? errorMessage = freezed,Object? selectedDate = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? purchases = null,Object? isLoading = null,Object? errorMessage = freezed,Object? selectedDate = null,}) {
   return _then(_self.copyWith(
 purchases: null == purchases ? _self.purchases : purchases // ignore: cast_nullable_to_non_nullable
-as List<Purchase>,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as List<Purchase>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,selectedDate: null == selectedDate ? _self.selectedDate : selectedDate // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
@@ -152,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Purchase> purchases,  String? errorMessage,  DateTime selectedDate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Purchase> purchases,  bool isLoading,  String? errorMessage,  DateTime selectedDate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PurchaseListState() when $default != null:
-return $default(_that.purchases,_that.errorMessage,_that.selectedDate);case _:
+return $default(_that.purchases,_that.isLoading,_that.errorMessage,_that.selectedDate);case _:
   return orElse();
 
 }
@@ -173,10 +174,10 @@ return $default(_that.purchases,_that.errorMessage,_that.selectedDate);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Purchase> purchases,  String? errorMessage,  DateTime selectedDate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Purchase> purchases,  bool isLoading,  String? errorMessage,  DateTime selectedDate)  $default,) {final _that = this;
 switch (_that) {
 case _PurchaseListState():
-return $default(_that.purchases,_that.errorMessage,_that.selectedDate);case _:
+return $default(_that.purchases,_that.isLoading,_that.errorMessage,_that.selectedDate);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +194,10 @@ return $default(_that.purchases,_that.errorMessage,_that.selectedDate);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Purchase> purchases,  String? errorMessage,  DateTime selectedDate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Purchase> purchases,  bool isLoading,  String? errorMessage,  DateTime selectedDate)?  $default,) {final _that = this;
 switch (_that) {
 case _PurchaseListState() when $default != null:
-return $default(_that.purchases,_that.errorMessage,_that.selectedDate);case _:
+return $default(_that.purchases,_that.isLoading,_that.errorMessage,_that.selectedDate);case _:
   return null;
 
 }
@@ -208,7 +209,7 @@ return $default(_that.purchases,_that.errorMessage,_that.selectedDate);case _:
 
 
 class _PurchaseListState implements PurchaseListState {
-  const _PurchaseListState({final  List<Purchase> purchases = const [], this.errorMessage, required this.selectedDate}): _purchases = purchases;
+  const _PurchaseListState({final  List<Purchase> purchases = const [], this.isLoading = false, this.errorMessage, required this.selectedDate}): _purchases = purchases;
   
 
  final  List<Purchase> _purchases;
@@ -218,6 +219,7 @@ class _PurchaseListState implements PurchaseListState {
   return EqualUnmodifiableListView(_purchases);
 }
 
+@override@JsonKey() final  bool isLoading;
 @override final  String? errorMessage;
 @override final  DateTime selectedDate;
 
@@ -231,16 +233,16 @@ _$PurchaseListStateCopyWith<_PurchaseListState> get copyWith => __$PurchaseListS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PurchaseListState&&const DeepCollectionEquality().equals(other._purchases, _purchases)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PurchaseListState&&const DeepCollectionEquality().equals(other._purchases, _purchases)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_purchases),errorMessage,selectedDate);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_purchases),isLoading,errorMessage,selectedDate);
 
 @override
 String toString() {
-  return 'PurchaseListState(purchases: $purchases, errorMessage: $errorMessage, selectedDate: $selectedDate)';
+  return 'PurchaseListState(purchases: $purchases, isLoading: $isLoading, errorMessage: $errorMessage, selectedDate: $selectedDate)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$PurchaseListStateCopyWith<$Res> implements $PurchaseListS
   factory _$PurchaseListStateCopyWith(_PurchaseListState value, $Res Function(_PurchaseListState) _then) = __$PurchaseListStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<Purchase> purchases, String? errorMessage, DateTime selectedDate
+ List<Purchase> purchases, bool isLoading, String? errorMessage, DateTime selectedDate
 });
 
 
@@ -268,10 +270,11 @@ class __$PurchaseListStateCopyWithImpl<$Res>
 
 /// Create a copy of PurchaseListState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? purchases = null,Object? errorMessage = freezed,Object? selectedDate = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? purchases = null,Object? isLoading = null,Object? errorMessage = freezed,Object? selectedDate = null,}) {
   return _then(_PurchaseListState(
 purchases: null == purchases ? _self._purchases : purchases // ignore: cast_nullable_to_non_nullable
-as List<Purchase>,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as List<Purchase>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,selectedDate: null == selectedDate ? _self.selectedDate : selectedDate // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));

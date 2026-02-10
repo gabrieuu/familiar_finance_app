@@ -11,46 +11,54 @@ class CreatePurchaseUsecase {
 
   CreatePurchaseUsecase(this._purchaseRepository, this._creditCardRepository);
 
-  Future<Result<void>> execute(Purchase purchase) async{
-    List<Installments> installments = await _generateInstallmentsByPurchase(purchase);
-    purchase = purchase.copyWith(installments: installments, finalizedAt: installments.isNotEmpty ? installments.last.dueDate : purchase.createdAt);
+  Future<Result<void>> execute(Purchase purchase) async {
+    List<Installments> installments = await _generateInstallmentsByPurchase(
+      purchase,
+    );
+    purchase = purchase.copyWith(
+      installments: installments,
+      finalizedAt: installments.isNotEmpty
+          ? installments.last.dueDate
+          : purchase.createdAt,
+    );
     return _purchaseRepository.registerPurchase(purchase);
   }
 
-  Future<List<Installments>> _generateInstallmentsByPurchase(Purchase purchase) async {
+  Future<List<Installments>> _generateInstallmentsByPurchase(
+    Purchase purchase,
+  ) async {
     List<Installments> installments = [];
-    
-    if(purchase.type != TypePurchase.parcel){
+
+    if (purchase.type != TypePurchase.parcel) {
       return installments;
     }
-    
-    final creditCardResult = await _creditCardRepository.getCreditCardById(purchase.creditCardId!);
-    
-    if(creditCardResult.isfailure){
+
+    final creditCardResult = await _creditCardRepository.getCreditCardById(
+      purchase.creditCardId!,
+    );
+
+    if (creditCardResult.isfailure) {
       return installments;
     }
 
     CreditCard creditCard = creditCardResult.data;
 
-    for(int i = 0; i < purchase.numberOfInstallments; i++){
-      if(purchase.createdAt.day > creditCard.diaFechamento){
+    for (int i = 0; i < purchase.numberOfInstallments; i++) {
+      if (purchase.createdAt.day > creditCard.diaFechamento) {
         i = i + 1;
       }
-      installments.add(Installments(
-        dueDate: DateTime(purchase.createdAt.year, purchase.createdAt.month + i, purchase.createdAt.day),
-        amount: purchase.amount / purchase.numberOfInstallments
-      ));
+      installments.add(
+        Installments(
+          purchaseId: purchase.id,
+          dueDate: DateTime(
+            purchase.createdAt.year,
+            purchase.createdAt.month + i,
+            purchase.createdAt.day,
+          ),
+          amount: purchase.amount / purchase.numberOfInstallments,
+        ),
+      );
     }
     return installments;
   }
 }
-
-
-// 04/02/2026
-
-//fechamento = 5;
-
-// 04/02/2026
-// 04/03/2026
-// 04/04/2026
-// 04/05/2026

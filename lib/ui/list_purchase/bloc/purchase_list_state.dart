@@ -7,10 +7,11 @@ part 'purchase_list_state.freezed.dart';
 abstract class PurchaseListState with _$PurchaseListState {
   const factory PurchaseListState({
     @Default([]) List<Purchase> purchases,
+    @Default(false) bool isLoading,
     String? errorMessage,
     required DateTime selectedDate,
   }) = _PurchaseListState;
 
-  factory PurchaseListState.initial() => PurchaseListState(selectedDate: DateTime.now());
-
+  factory PurchaseListState.initial() =>
+      PurchaseListState(selectedDate: DateTime.now());
 }

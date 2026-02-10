@@ -24,7 +24,7 @@ class Purchase {
     required this.creditCardId,
     required this.createdAt,
     this.finalizedAt,
-  }): id = id ?? Uuid().v4();
+  }) : id = id ?? Uuid().v4();
 
   @override
   String toString() {
@@ -56,8 +56,6 @@ class Purchase {
       finalizedAt: finalizedAt ?? this.finalizedAt,
     );
   }
-
-
 }
 
 enum TypePurchase {
