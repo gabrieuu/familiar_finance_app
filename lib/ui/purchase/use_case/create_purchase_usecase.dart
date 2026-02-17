@@ -1,4 +1,5 @@
 import 'package:familiar_finance_app/data/repositories/creditcard/creditcard_repository.dart';
+import 'package:familiar_finance_app/data/repositories/installments/installments_repository.dart';
 import 'package:familiar_finance_app/data/repositories/purchase/purchase_repository.dart';
 import 'package:familiar_finance_app/domain/credit_card/credit_card.dart';
 import 'package:familiar_finance_app/domain/installments/installments.dart';
@@ -8,8 +9,13 @@ import 'package:familiar_finance_app/utils/result.dart';
 class CreatePurchaseUsecase {
   final PurchaseRepository _purchaseRepository;
   final CreditCardRepository _creditCardRepository;
+  final InstallmentsRepository _installmentRepository;
 
-  CreatePurchaseUsecase(this._purchaseRepository, this._creditCardRepository);
+  CreatePurchaseUsecase(
+    this._purchaseRepository,
+    this._creditCardRepository,
+    this._installmentRepository,
+  );
 
   Future<Result<void>> execute(Purchase purchase) async {
     List<Installments> installments = await _generateInstallmentsByPurchase(
@@ -21,7 +27,15 @@ class CreatePurchaseUsecase {
           ? installments.last.dueDate
           : purchase.createdAt,
     );
-    return _purchaseRepository.registerPurchase(purchase);
+    final result = await _purchaseRepository.registerPurchase(purchase);
+    if (result.isfailure) {
+      return result;
+    }
+    final resultInstallments = await _installmentRepository.registerInstallment(
+      purchase.id,
+      installments,
+    );
+    return resultInstallments;
   }
 
   Future<List<Installments>> _generateInstallmentsByPurchase(

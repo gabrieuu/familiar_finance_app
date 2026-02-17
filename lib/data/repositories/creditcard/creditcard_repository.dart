@@ -8,7 +8,7 @@ class CreditCardRepository {
   CreditCardRepository(this.creditCardDb);
 
   Future<Result<CreditCard>> getCreditCardById(String creditCardId) async {
-    throw UnimplementedError();
+    return creditCardDb.getCreditCardById(creditCardId);
   }
 
   Future<Result<void>> addCreditCard(CreditCard creditCard) async {

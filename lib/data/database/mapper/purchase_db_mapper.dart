@@ -14,6 +14,8 @@ class PurchaseDbMapper {
       type: Value(purchase.type.name),
       amount: Value(purchase.amount),
       creditCardId: Value(creditCardId),
+      creditCardIdDomain: Value(purchase.creditCardId!),
+      numberOfInstallments: Value(purchase.numberOfInstallments),
       createdAt: Value(purchase.createdAt),
       needToSync: Value(needToSync),
       finalizedAt: Value(purchase.finalizedAt),

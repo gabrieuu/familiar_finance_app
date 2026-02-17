@@ -4,6 +4,7 @@ import 'package:familiar_finance_app/utils/result.dart';
 
 abstract class CreditCardDb implements ModifiedDatabase {
   Future<Result<List<CreditCard>>> getCreditCards();
+  Future<Result<CreditCard>> getCreditCardById(String creditCardId);
   Future<Result<void>> addCreditCard(
     CreditCard creditCard, {
     bool isLocal = false,

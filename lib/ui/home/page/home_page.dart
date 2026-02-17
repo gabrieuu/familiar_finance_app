@@ -4,6 +4,7 @@ import 'package:familiar_finance_app/ui/list_credit_card/bloc/list_credit_card_c
 import 'package:familiar_finance_app/ui/list_purchase/bloc/purchase_list_cubit.dart';
 import 'package:familiar_finance_app/ui/list_purchase/bloc/purchase_list_state.dart';
 import 'package:familiar_finance_app/ui/purchase/page/add_purchase.dart';
+import 'package:familiar_finance_app/ui/credit_card/page/add_credit_card_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -68,6 +69,9 @@ class _HomePageState extends State<HomePage> {
                 return SliverToBoxAdapter(child: _buildMonthlyHeader(state));
               },
             ),
+
+            // Carrossel de Cartões
+            _buildCreditCardsCarousel(),
             // Seletor de Mês/Ano
             SliverToBoxAdapter(child: _buildMonthYearSelector()),
 
@@ -174,8 +178,9 @@ class _HomePageState extends State<HomePage> {
             return _buildShimmerCards();
           }
 
+          // Show carousel even if empty to show the Add Button
           if (state.creditCards.isEmpty) {
-            return const SizedBox.shrink();
+            // return const SizedBox.shrink(); // Show Add button instead
           }
 
           return Container(
@@ -185,8 +190,11 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
-              itemCount: state.creditCards.length,
+              itemCount: state.creditCards.length + 1,
               itemBuilder: (context, index) {
+                if (index == state.creditCards.length) {
+                  return _buildAddCardButton();
+                }
                 final card = state.creditCards[index];
                 final isSelected = _selectedCardId == card.id;
 
@@ -1414,5 +1422,60 @@ class _HomePageState extends State<HomePage> {
       default:
         return 'Outro';
     }
+  }
+
+  Widget _buildAddCardButton() {
+    return GestureDetector(
+      onTap: () async {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AddCreditCardPage()),
+        );
+        if (result == true) {
+          creditCardCubit.loadCreditCards();
+        }
+      },
+      child: Container(
+        width: 60,
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          color: _kSurface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.grey.shade300,
+            style: BorderStyle.solid,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: _kPrimary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.add_rounded, color: _kPrimary, size: 24),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Novo',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: _kPrimary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

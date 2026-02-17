@@ -16,22 +16,6 @@ class InstallmentDao extends DatabaseAccessor<AppDatabase>
   InstallmentDao(super.attachedDatabase);
 
   @override
-  Future<Result<List<Installments>>> getInstallmentsByPurchasesIds(
-    List<String> purchaseIds,
-  ) async {
-    try {
-      final installments = await (select(
-        installmentEntity,
-      )..where((tbl) => tbl.purchaseIdDomain.isIn(purchaseIds))).get();
-      return Result.ok(
-        installments.map((e) => InstallmentDbMapper.toDomain(e)).toList(),
-      );
-    } catch (e) {
-      return Result.failure('Erro ao buscar parcelas: $e');
-    }
-  }
-
-  @override
   Future<Result<void>> registerInstallment(
     String purchaseId,
     List<Installments> installments, {
@@ -99,6 +83,22 @@ class InstallmentDao extends DatabaseAccessor<AppDatabase>
       final installments = await (select(
         installmentEntity,
       )..where((tb) => tb.needToSync.equals(true))).get();
+      return Result.ok(
+        installments.map((e) => InstallmentDbMapper.toDomain(e)).toList(),
+      );
+    } catch (e) {
+      return Result.failure('Erro ao buscar parcelas: $e');
+    }
+  }
+
+  @override
+  Future<Result<List<Installments>>> getInstallmentByPurchaseId(
+    String purchaseId,
+  ) async {
+    try {
+      final installments = await (select(
+        installmentEntity,
+      )..where((tb) => tb.purchaseIdDomain.equals(purchaseId))).get();
       return Result.ok(
         installments.map((e) => InstallmentDbMapper.toDomain(e)).toList(),
       );

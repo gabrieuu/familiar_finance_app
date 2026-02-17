@@ -34,8 +34,11 @@ class PurchaseRepository {
       await _purchaseDao.registerPurchase(purchase);
       return Result.ok(null);
     } catch (e) {
-      await _purchaseDao.registerPurchase(purchase);
-      return Result.failure('Salvo localmente. Erro no sync: $e');
+      final result = await _purchaseDao.registerPurchase(purchase);
+      return result.when(
+        ok: (_) => Result.ok(null),
+        failure: (error) => Result.failure(error),
+      );
     }
   }
 

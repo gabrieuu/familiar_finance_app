@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:drift/drift.dart';
 import 'package:familiar_finance_app/data/database/app_database.dart';
 import 'package:familiar_finance_app/data/database/entity/purchase_entity.dart';
@@ -122,6 +124,7 @@ class PurchaseDao extends DatabaseAccessor<AppDatabase>
       await into(purchaseEntity).insert(companion);
       return Result.ok(null);
     } catch (e) {
+      log(e.toString());
       return Result.failure(Exception(e.toString()));
     }
   }

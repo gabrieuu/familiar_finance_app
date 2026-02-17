@@ -22,6 +22,16 @@ class CreditCardDao extends DatabaseAccessor<AppDatabase>
   }
 
   @override
+  Future<Result<CreditCard>> getCreditCardById(String creditCardId) async {
+    try {
+      final creditCard = await _getCreditCardById(creditCardId);
+      return Result.ok(CreditcardDbMapper.toDomain(creditCard));
+    } catch (e) {
+      return Result.failure('Erro ao buscar cartão de crédito: $e');
+    }
+  }
+
+  @override
   Future<Result<void>> addCreditCard(
     CreditCard creditCard, {
     bool isLocal = false,

@@ -3,8 +3,8 @@ import 'package:familiar_finance_app/domain/installments/installments.dart';
 import 'package:familiar_finance_app/utils/result.dart';
 
 abstract class InstallmentDb implements ModifiedDatabase {
-  Future<Result<List<Installments>>> getInstallmentsByPurchasesIds(
-    List<String> purchaseIds,
+  Future<Result<List<Installments>>> getInstallmentByPurchaseId(
+    String purchaseId,
   );
   Future<Result<void>> registerInstallment(
     String purchaseId,

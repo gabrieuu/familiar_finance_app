@@ -5,8 +5,9 @@ import 'package:familiar_finance_app/data/database/entity/purchase_entity.dart';
 class InstallmentEntity extends Table with ModifiedMixin {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get idDomain => text().unique()();
-  IntColumn get purchaseId => integer().references(PurchaseEntity, #id)();
-  TextColumn get purchaseIdDomain => text().unique()();
+  IntColumn get purchaseId =>
+      integer().references(PurchaseEntity, #id, onDelete: KeyAction.cascade)();
+  TextColumn get purchaseIdDomain => text()();
   RealColumn get amount => real()();
   DateTimeColumn get dueDate => dateTime()();
 }

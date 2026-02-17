@@ -5,8 +5,12 @@ import 'package:familiar_finance_app/data/database/entity/mixin/updated_mixin.da
 class PurchaseEntity extends Table with ModifiedMixin {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get idDomain => text().unique()();
-  IntColumn get creditCardId => integer().references(CreditcardEntity, #id)();
-  TextColumn get creditCardIdDomain => text().unique()();
+  IntColumn get creditCardId => integer().references(
+    CreditcardEntity,
+    #id,
+    onUpdate: KeyAction.setNull,
+  )();
+  TextColumn get creditCardIdDomain => text()();
   TextColumn get title => text()();
   TextColumn get type => text()();
   IntColumn get numberOfInstallments => integer()();
